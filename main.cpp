@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <ctime>
+#include <unistd.h>
 #include <list>
 #include <ncurses.h>
 
@@ -165,6 +166,7 @@ int main() {
     srand(time(0));
     initGame();
     Move m = snake.front().m;
+    uint32_t wait = 200;
     bool running = true;
     do {
         int key = getch();
@@ -200,6 +202,8 @@ int main() {
             mvprintw(0, xC, "GAME OVER");
             running = false;
         }
+        flushinp();
+        usleep(wait * 1000);
     } while (running);
     int xC = (Field_x0 + 1 + (Field_x1 - (Field_x0 + 1))) / 2 - 10;
     mvprintw(2, xC, "Press any key to exit");
