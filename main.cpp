@@ -20,6 +20,67 @@ int Field_x0 = 0, Field_y0 = 2, Field_x1 = 40, Field_y1 = 20;
 int Food_x, Food_y, score = 0;
 std::list<Point> snake;
 
+void moveSnake(Move m) {
+    int x = snake.front().x;
+    int y = snake.front().y;
+    switch (m) {
+        case UP:
+            snake.push_front(Point(x, y - 1, m));
+            snake.pop_back();
+            break;
+        case DOWN:
+            snake.push_front(Point(x, y + 1, m));
+            snake.pop_back();
+            break;
+        case LEFT:
+            snake.push_front(Point(x - 1, y, m));
+            snake.pop_back();
+            break;
+        case RIGHT:
+            snake.push_front(Point(x + 1, y, m));
+            snake.pop_back();
+            break;
+    }
+}
+
+void addPoint() {
+    int x = snake.back().x;
+    int y = snake.back().y;
+    Move m = snake.back().m;
+    switch (m) {
+        case UP:
+            snake.push_back(Point(x, y + 1, m));
+            break;
+        case DOWN:
+            snake.push_back(Point(x, y - 1, m));
+            break;
+        case LEFT:
+            snake.push_back(Point(x + 1, y, m));
+            break;
+        case RIGHT:
+            snake.push_back(Point(x - 1, y, m));
+            break;
+    }
+}
+
+bool checkSnakeCoord() {
+    int x = snake.front().x;
+    int y = snake.front().y;
+    std::list<Point>::iterator it = ++snake.begin();
+    std::list<Point>::iterator end = snake.end();
+    for (; it != end; ++it) {
+        if (x == it->x && y == it->y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool checkFieldCoord() {
+    return snake.front().x == Field_x0 || snake.front().x == Field_x1
+           || snake.front().y == Field_y0 || snake.front().y == Field_y1;
+}
+
 bool checkFoodCoord() {
     int x = Food_x;
     int y = Food_y;
@@ -38,6 +99,20 @@ void newFood() {
         Food_y = Field_y0 + 1 + rand() % (Field_y1 - (Field_y0 + 1));
         good = checkFoodCoord();
     } while (!good);
+}
+
+void printSnake() {
+    std::list<Point>::iterator it = snake.begin();
+    std::list<Point>::iterator end = snake.end();
+    for (; it != end; ++it) {
+        if (it->m == UP || it->m == DOWN) {
+            mvaddch(it->y, it->x, '|');
+        } else {
+            mvaddch(it->y, it->x, '~');
+        }
+    }
+    mvaddch(snake.back().y, snake.back().x, ',');
+    mvaddch(snake.front().y, snake.front().x, '@');
 }
 
 void printRect(int x0, int y0, int x1, int y1) {
@@ -66,6 +141,7 @@ void render() {
     printRect(Field_x0, Field_y0, Field_x1, Field_y1);
     printRect(0, 0, Field_x1, Field_y0);
     mvprintw(1, 1, "Score %d", score);
+    printSnake();
     mvaddch(Food_y, Food_x, 'F');
     mvaddch(0, 0, '#');
     refresh();
@@ -91,7 +167,6 @@ int main() {
     Move m = snake.front().m;
     bool running = true;
     do {
-        render();
         int key = getch();
         switch (key) {
             case 'q':
@@ -113,7 +188,23 @@ int main() {
             default:
                 break;
         }
+        moveSnake(m);
+        if (snake.front().x == Food_x && snake.front().y == Food_y) {
+            addPoint();
+            score++;
+            newFood();
+        }
+        render();
+        if (checkFieldCoord() || checkSnakeCoord()) {
+            int xC = (Field_x0 + 1 + (Field_x1 - (Field_x0 + 1))) / 2 - 4;
+            mvprintw(0, xC, "GAME OVER");
+            running = false;
+        }
     } while (running);
+    int xC = (Field_x0 + 1 + (Field_x1 - (Field_x0 + 1))) / 2 - 10;
+    mvprintw(2, xC, "Press any key to exit");
+    mvaddch(0, 0, '#');
+    refresh();
     nodelay(stdscr, FALSE);
     getch();
     clear();
