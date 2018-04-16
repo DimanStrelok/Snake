@@ -2,7 +2,8 @@
 #include <ctime>
 #include <unistd.h>
 #include <list>
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
+//#include <ncurses.h>
 
 enum Move {
     UP, DOWN, LEFT, RIGHT
@@ -166,7 +167,7 @@ int main() {
     srand(time(0));
     initGame();
     Move m = snake.front().m;
-    uint32_t wait = 200;
+    int wait = 200;
     bool running = true;
     do {
         int key = getch();
