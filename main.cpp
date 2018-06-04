@@ -189,7 +189,9 @@ int main() {
     srand(time(0));
     initGame();
     Move m = snake.front().m;
-    int wait = 200;
+    int wait = 100;
+    int r_sk = rand() % 100;
+    wait += r_sk;
     bool running = true;
     do {
         int key = getch();
