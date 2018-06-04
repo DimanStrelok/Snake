@@ -152,6 +152,9 @@ void render() {
 void initGame() {
     int xC = (Field_x0 + 1 + (Field_x1 - (Field_x0 + 1))) / 2;
     int yC = (Field_y0 + 1 + (Field_y1 - (Field_y0 + 1))) / 2;
+    int r_pos = rand() % 4;
+    xC += r_pos;
+    yC += r_pos;
     Move m = (Move)(rand() % 4);
     switch (m) {
          case UP:
