@@ -150,12 +150,31 @@ void render() {
 }
 
 void initGame() {
-    Move m = RIGHT;
     int xC = (Field_x0 + 1 + (Field_x1 - (Field_x0 + 1))) / 2;
     int yC = (Field_y0 + 1 + (Field_y1 - (Field_y0 + 1))) / 2;
-    snake.push_back(Point(xC + 1, yC, m));
-    snake.push_back(Point(xC, yC, m));
-    snake.push_back(Point(xC - 1, yC, m));
+    Move m = (Move)(rand() % 4);
+    switch (m) {
+         case UP:
+                snake.push_back(Point(xC, yC - 1, m));
+                snake.push_back(Point(xC, yC, m));
+                snake.push_back(Point(xC, yC + 1, m));
+                break;
+         case DOWN:
+                snake.push_back(Point(xC, yC + 1, m));
+                snake.push_back(Point(xC, yC, m));
+                snake.push_back(Point(xC, yC - 1, m));
+                break;
+         case LEFT:
+                snake.push_back(Point(xC - 1, yC, m));
+                snake.push_back(Point(xC, yC, m));
+                snake.push_back(Point(xC + 1, yC, m));
+                break;
+         case RIGHT:
+                snake.push_back(Point(xC + 1, yC, m));
+                snake.push_back(Point(xC, yC, m));
+                snake.push_back(Point(xC - 1, yC, m));
+                break;
+    }
     newFood();
 }
 
